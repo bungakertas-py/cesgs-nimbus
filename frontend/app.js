@@ -1913,6 +1913,7 @@ async function init() {
     $("share-btn")?.addEventListener("click", shareCurrent);
     $("fs-btn")?.addEventListener("click", toggleFullscreen);
     $("about-btn")?.addEventListener("click", openAbout);
+    $("nav-arrow")?.addEventListener("click", () => $("nav-arrow").closest(".brand-row")?.classList.toggle("nav-open"));
     $("about-close")?.addEventListener("click", closeAbout);
     $("about-overlay")?.addEventListener("click", (e) => { if (e.target === e.currentTarget) closeAbout(); });
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeAbout(); });

@@ -42,33 +42,36 @@
       <div class="ui-top">
         <!-- kiri: layer + model -->
         <div class="col">
-          <div class="panel brand">
-            <svg class="brand-logo" viewBox="0 0 48 48" width="38" height="38" aria-hidden="true">
-              <g transform="translate(24 26.5) scale(0.88)" stroke="#1c1b1b" stroke-width="2" stroke-linejoin="round">
-                <g fill="#e64980">
-                  <ellipse cx="0" cy="-12" rx="8.5" ry="12"/>
-                  <ellipse cx="0" cy="-12" rx="8.5" ry="12" transform="rotate(120)"/>
-                  <ellipse cx="0" cy="-12" rx="8.5" ry="12" transform="rotate(240)"/>
+          <!-- brand + panah pindah ke Kertas Fenomena (kontainer saudara, geser ke kanan) -->
+          <div class="brand-row">
+            <div class="panel brand">
+              <svg class="brand-logo" viewBox="0 0 48 48" width="38" height="38" aria-hidden="true">
+                <g transform="translate(24 26.5) scale(0.88)" stroke="#1c1b1b" stroke-width="2" stroke-linejoin="round">
+                  <g fill="#e64980">
+                    <ellipse cx="0" cy="-12" rx="8.5" ry="12"/>
+                    <ellipse cx="0" cy="-12" rx="8.5" ry="12" transform="rotate(120)"/>
+                    <ellipse cx="0" cy="-12" rx="8.5" ry="12" transform="rotate(240)"/>
+                  </g>
+                  <circle r="4.5" fill="#ffd43b"/>
                 </g>
-                <circle r="4.5" fill="#ffd43b"/>
-              </g>
-            </svg>
-            <div class="brand-text">
-              <strong>Kertas Cuaca</strong>
-              <span>From Sky to Data · Farras Ghaly</span>
+              </svg>
+              <div class="brand-text">
+                <strong>Kertas Cuaca</strong>
+                <span>From Sky to Data · Farras Ghaly</span>
+              </div>
+              <button id="about-btn" class="brand-info" title="Tentang" aria-label="Tentang"><span class="material-symbols-outlined">info</span></button>
+              <button id="nav-arrow" class="nav-arrow" aria-label="Pindah ke Kertas Fenomena" title="Kertas Fenomena"><span class="material-symbols-outlined">chevron_right</span></button>
             </div>
-            <button id="about-btn" class="brand-info" title="Tentang" aria-label="Tentang"><span class="material-symbols-outlined">info</span></button>
+            <!-- Kontainer saudara (tersembunyi, muncul saat panah ditekan): ke Kertas Fenomena -->
+            <a class="sibling-link" href="https://bungakertas-py.github.io/kertas-fenomena/" title="Buka Kertas Fenomena (peta iklim ENSO & IOD)">
+              <span class="material-symbols-outlined pl-ico">waves</span>
+              <span class="pl-txt">
+                <strong>Kertas Fenomena</strong>
+                <span>El Nino, La Nina, Dipol Samudra Hindia</span>
+              </span>
+              <span class="material-symbols-outlined pl-go">arrow_forward</span>
+            </a>
           </div>
-
-          <!-- Kartu link ke Kertas Fenomena (pemantau iklim ENSO & IOD, repo terpisah). -->
-          <a class="panel phenom-link" href="https://bungakertas-py.github.io/kertas-fenomena/" target="_blank" rel="noopener" title="Buka Kertas Fenomena (peta iklim ENSO & IOD)">
-            <span class="material-symbols-outlined pl-ico">waves</span>
-            <span class="pl-txt">
-              <strong>Pantau Interannual</strong>
-              <span>El Nino, La Nina, Dipol Samudra Hindia</span>
-            </span>
-            <span class="material-symbols-outlined pl-go">open_in_new</span>
-          </a>
 
           <!-- Wadah catatan siklon + ITCZ. Keduanya mengalir dalam kolom flex agar
                saat satu banner memuai (dropdown), yang lain terdorong turun.

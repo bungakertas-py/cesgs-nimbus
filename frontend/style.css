@@ -623,7 +623,7 @@ html, body {
 
 /* Layar penuh / immersive: sisakan HANYA brand Kertas Cuaca + tombol fullscreen.
    Class di #stage (induk #ui & overlay sibling spt #cyc-note/#toast). */
-#stage.immersive #ui .col > *:not(.brand):not(#fs-btn),
+#stage.immersive #ui .col > *:not(.brand):not(.brand-row):not(#fs-btn),
 #stage.immersive .ui-bottom,
 #stage.immersive .notes,
 #stage.immersive #toast,
@@ -640,6 +640,33 @@ html, body {
 .brand-info:hover { background: var(--lime); }
 .brand-info .material-symbols-outlined { font-size: 17px; color: var(--primary); }
 .brand-info:hover .material-symbols-outlined { color: var(--on-lime); }
+
+/* ---- Pindah antar-app (Kertas Cuaca <-> Fenomena): panah di brand buka kontainer saudara ---- */
+.brand-row { display: flex; align-items: flex-start; gap: 10px; }
+.nav-arrow { flex: none; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  background: var(--surface); border: 2px solid var(--ink); box-shadow: 2px 2px 0 0 var(--ink);
+  cursor: pointer; pointer-events: auto; margin-left: 2px; }
+.nav-arrow:hover { background: var(--lime); }
+.nav-arrow .material-symbols-outlined { font-size: 18px; color: var(--primary); transition: transform .25s ease; }
+.nav-arrow:hover .material-symbols-outlined { color: var(--on-lime); }
+.brand-row.nav-open .nav-arrow .material-symbols-outlined { transform: rotate(180deg); }
+/* Kartu app saudara: tersembunyi -> geser muncul ke KANAN saat panah ditekan.
+   Saat tutup border transparan & lebar 0 supaya tak ada sisa. */
+.sibling-link { display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--ink);
+  border: var(--bw) solid transparent; background: var(--surface); box-shadow: none;
+  max-width: 0; padding: 9px 0; opacity: 0; overflow: hidden; white-space: nowrap; pointer-events: none;
+  transition: max-width .3s ease, opacity .25s ease, padding .3s ease, border-color .2s ease, box-shadow .2s ease, transform .12s ease; }
+.brand-row.nav-open .sibling-link { max-width: 300px; opacity: 1; padding: 9px 13px; pointer-events: auto;
+  border-color: var(--ink); box-shadow: var(--shadow); }
+.sibling-link:hover { background: var(--lime); transform: translate(2px, -2px); box-shadow: -6px 6px 0 0 var(--ink); }
+.sibling-link .pl-ico { flex: none; color: var(--primary); font-size: 26px; }
+.sibling-link:hover .pl-ico { color: var(--on-lime); }
+.sibling-link .pl-txt { display: flex; flex-direction: column; line-height: 1.1; }
+.sibling-link .pl-txt strong { font-family: var(--font-display); font-size: 14px; letter-spacing: -.01em; }
+.sibling-link .pl-txt span { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .03em; color: var(--variant); margin-top: 4px; }
+.sibling-link:hover .pl-txt span { color: var(--on-lime); }
+.sibling-link .pl-go { flex: none; font-size: 18px; color: var(--variant); }
+.sibling-link:hover .pl-go { color: var(--on-lime); }
 
 /* Kartu Tentang (modal) */
 .about-overlay { position: fixed; inset: 0; z-index: 3000; display: none; align-items: center; justify-content: center;
