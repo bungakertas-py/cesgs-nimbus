@@ -58,8 +58,8 @@ def main() -> None:
             preview = fr.get("preview_image")
             if not preview:
                 continue
-            base = (preview[:-len("_preview.png")]
-                    if preview.endswith("_preview.png") else Path(preview).stem)
+            stem = Path(preview).stem                                   # buang ekstensi (.png/.webp)
+            base = stem[:-len("_preview")] if stem.endswith("_preview") else stem
             files = [f"{base}.json", preview]
             if fr.get("data_image"):
                 files.append(fr["data_image"])

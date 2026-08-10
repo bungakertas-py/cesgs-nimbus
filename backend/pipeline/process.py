@@ -192,6 +192,15 @@ def _speed_to_rgb(speed_knots: np.ndarray) -> np.ndarray:
     return out.round().astype("uint8")
 
 
+def _save_preview(img: Image.Image, dest: Path) -> None:
+    """Simpan pratinjau (heatmap untuk mata): WebP q90 bila .webp (5-7x lebih kecil dari
+    PNG, visual sama). Data image (nilai angin di piksel) TETAP PNG lossless di tempat lain."""
+    if str(dest).lower().endswith(".webp"):
+        img.save(dest, "WEBP", quality=90, method=6, alpha_quality=100)
+    else:
+        img.save(dest)
+
+
 def _render_speed_preview(u: np.ndarray, v: np.ndarray, dest: Path, scale: int = 4) -> None:
     """PNG pratinjau kecepatan angin berwarna (untuk mata manusia)."""
     speed_kt = np.sqrt(u ** 2 + v ** 2) * MS_TO_KNOTS
@@ -199,7 +208,7 @@ def _render_speed_preview(u: np.ndarray, v: np.ndarray, dest: Path, scale: int =
     img = Image.fromarray(rgb, mode="RGB")
     if scale > 1:
         img = img.resize((img.width * scale, img.height * scale), Image.BILINEAR)
-    img.save(dest)
+    _save_preview(img, dest)
 
 
 def _load_scalar(grib_path: Path, filter_keys: dict | None = None) -> tuple[np.ndarray, dict]:
@@ -246,7 +255,7 @@ def _render_scalar_preview(values: np.ndarray, scale: list, dest: Path, scale_up
     img = Image.fromarray(rgba, mode="RGBA")
     if scale_up > 1:
         img = img.resize((img.width * scale_up, img.height * scale_up), Image.BILINEAR)
-    img.save(dest)
+    _save_preview(img, dest)
 
 
 _SCALAR_SCALES = {
@@ -299,7 +308,7 @@ def process_wind(grib_path: Path, layer_key: str, run: dt.datetime, fstep: int,
     base = f"{layer_key}_{stamp}"
 
     data_png = out_dir / f"{base}.png"
-    preview_png = out_dir / f"{base}_preview.png"
+    preview_png = out_dir / f"{base}_preview.webp"
     velocity_json = out_dir / f"{base}_velocity.json"
     meta_json = out_dir / f"{base}.json"
 
@@ -340,7 +349,7 @@ def process_scalar(grib_path: Path, layer_key: str, run: dt.datetime, fstep: int
 
     valid_time = run + dt.timedelta(hours=fstep)
     base = f"{layer_key}_{run:%Y%m%d_%H}_f{fstep:03d}"
-    preview_png = out_dir / f"{base}_preview.png"
+    preview_png = out_dir / f"{base}_preview.webp"
     meta_json = out_dir / f"{base}.json"
 
     scale = _SCALAR_SCALES.get(layer_key, _RAIN_SCALE)
@@ -378,7 +387,7 @@ def write_scalar_frame(values: np.ndarray, grid: dict, layer_key: str, run: dt.d
     (dipakai mis. akumulasi hujan harian). base_suffix jadi bagian nama file."""
     scale = _SCALAR_SCALES.get(layer_key, _RAIN_SCALE)
     base = f"{layer_key}_{run:%Y%m%d_%H}_{base_suffix}"
-    preview_png = out_dir / f"{base}_preview.png"
+    preview_png = out_dir / f"{base}_preview.webp"
     meta_json = out_dir / f"{base}.json"
     _render_scalar_preview(values, scale, preview_png)
     meta = {
