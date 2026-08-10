@@ -196,7 +196,7 @@ def _save_preview(img: Image.Image, dest: Path) -> None:
     """Simpan pratinjau (heatmap untuk mata): WebP q90 bila .webp (5-7x lebih kecil dari
     PNG, visual sama). Data image (nilai angin di piksel) TETAP PNG lossless di tempat lain."""
     if str(dest).lower().endswith(".webp"):
-        img.save(dest, "WEBP", quality=90, method=6, alpha_quality=100)
+        img.save(dest, "WEBP", quality=90, method=4, alpha_quality=100)   # method 4: encode 2-3x lebih cepat, ukuran ~sama
     else:
         img.save(dest)
 
