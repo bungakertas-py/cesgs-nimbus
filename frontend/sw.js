@@ -1,14 +1,14 @@
-/* Service worker Kertas Cuaca — cache SHELL app (berversi), data cuaca TETAP
+/* Service worker CESGS Nimbus — cache SHELL app (berversi), data cuaca TETAP
  * online. Naikkan VERSION tiap rilis frontend agar user dapat versi terbaru
  * (cache lama dihapus saat activate). */
-const VERSION = "v6";
-const CACHE = "kertas-cuaca-" + VERSION;
+const VERSION = "v7";   // dinaikkan saat ganti nama ke CESGS Nimbus
+const CACHE = "cesgs-nimbus-" + VERSION;
 
 // Shell same-origin (relatif thd scope frontend/). Data model (../backend/…)
 // berada DI LUAR path frontend → sengaja tak di-cache (lihat handler fetch).
 const SHELL = [
   "./", "./index.html", "./style.css", "./app.js", "./skewt.js",
-  "./favicon.svg", "./manifest.webmanifest",
+  "./cesgs-mark.png", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png",
   "./data/world_countries.geojson", "./data/idn_provinces.geojson", "./data/id_places.json",
 ];

@@ -1,4 +1,4 @@
-/* Peta Cuaca — frontend (angin + hujan, GFS)
+/* CESGS Nimbus — frontend (angin + hujan, GFS)
  * Membaca catalog.json + aset dari pipeline backend; angin = partikel + heatmap
  * kecepatan, hujan = heatmap laju hujan. Layout & gaya ala BMKG Signature.
  */
@@ -74,7 +74,7 @@ const LAYER_THEME = {
 const BORDER_COLOR = {
   temp_surface: "#000000",       // batas hitam di atas heatmap suhu
   humidity_surface: "#000000",   // batas hitam di atas heatmap kelembapan
-  cloud_surface: "#39ff14",      // batas hijau neon di atas tutupan awan
+  cloud_surface: "#4648d4",      // batas violet di atas tutupan awan (dulu hijau neon)
   pressure_surface: "#6d7787",   // batas ABU (redup) di layer tekanan → isobar jadi garis utama
   temp_strato: "#000000",        // batas hitam di atas heatmap suhu stratosfer
 };
@@ -171,7 +171,7 @@ const map = L.map("map", {
   minZoom: 3,
   maxZoom: 9,
   zoomSnap: 0,             // izinkan zoom pecahan → bingkai bisa pas mengisi layar
-  zoomControl: false,      // pakai tombol zoom neubrutalist sendiri
+  zoomControl: false,      // pakai tombol zoom kaca sendiri
   attributionControl: false, // kredit ditaruh di footer sidebar
   maxBoundsViscosity: 1.0, // dinding keras: tak bisa geser keluar kotak
   preferCanvas: true,      // render vektor (batas) via Canvas: hanya yang masuk frame
@@ -185,7 +185,10 @@ const map = L.map("map", {
 // tiap sisi → tepi data tak pernah terlihat.
 const VIEW_CORE = L.latLngBounds([-28, 68], [28, 174]);
 
-L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+// Peta dasar GELAP. Panel kaca ikut gelap dan tembus pandang, jadi peta di
+// belakangnya tetap kelihatan. Varian nolabels dipakai karena label sudah
+// ditempel sendiri di pane terpisah, di atas heatmap.
+L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png", {
   attribution: '&copy; OpenStreetMap &copy; CARTO | Data: NOAA GFS',
   subdomains: "abcd",
   maxZoom: 12,
@@ -421,6 +424,14 @@ function setActiveLayer(layerKey) {
   updateHash();
 }
 
+// Isian gradasi di jalur slider waktu. Chrome tak punya ::-moz-range-progress,
+// jadi porsi terisi dikirim ke CSS lewat variabel --fill.
+function syncSliderFill(el) {
+  const max = parseFloat(el.max) || 0;
+  const pct = max > 0 ? (parseFloat(el.value) / max) * 100 : 0;
+  el.style.setProperty("--fill", pct.toFixed(2) + "%");
+}
+
 async function showFrame(i) {
   current = (i + frames.length) % frames.length;
   const frame = frames[current];
@@ -465,7 +476,7 @@ async function showFrame(i) {
 
   const vt = $("valid-time");
   if (vt) vt.textContent = DAILY_LAYERS.has(activeLayer) ? fmtDay(frame.valid_time) : fmtValid(frame.valid_time);
-  const ts = $("time-slider"); if (ts) ts.value = String(current);
+  const ts = $("time-slider"); if (ts) { ts.value = String(current); syncSliderFill(ts); }
   if (cityIconsOn) refreshCityIcons();   // ikon kondisi kota ikut waktu aktif
   if (cyclonesOn) refreshCyclones();     // siklon + jalur ikut waktu aktif
   if (itczOn) refreshItcz();             // zona ITCZ ikut waktu aktif
@@ -600,7 +611,8 @@ function sampleProfile(pd, lat, lon, ti) {
 }
 
 // Export PLOT Skew-T (tanpa legenda) ke PNG. Rasterize SVG plot ke canvas,
-// beri latar + border + bayangan neubrutalist agar rapi saat dibagikan.
+// beri latar terang + kartu putih bersudut membulat + bayangan lembut biar
+// senada dengan gaya Atmospheric Glass saat dibagikan.
 function exportSkewTPng() {
   const wrap = $("pt-skewt-wrap");
   const svgEl = wrap && wrap.querySelector("svg");   // svg PERTAMA = plot (bukan swatch legenda)
@@ -610,17 +622,29 @@ function exportSkewTPng() {
   const xml = new XMLSerializer().serializeToString(svgEl);
   const img = new Image();
   img.onload = () => {
-    const s = 2, M = 14, SH = 6;
-    const cw = W + M * 2 + SH, ch = H + M * 2 + SH;
+    const s = 2, M = 20, R = 12;
+    const cw = W + M * 2, ch = H + M * 2;
     const c = document.createElement("canvas");
     c.width = cw * s; c.height = ch * s;
     const x = c.getContext("2d");
     x.scale(s, s);
-    x.fillStyle = "#fcf8f8"; x.fillRect(0, 0, cw, ch);         // latar
-    x.fillStyle = "#1c1b1b"; x.fillRect(M + SH, M + SH, W, H); // bayangan keras
-    x.fillStyle = "#ffffff"; x.fillRect(M, M, W, H);           // latar plot putih
+    // Sudut membulat; peramban lama tanpa roundRect jatuh ke kotak biasa.
+    const rr = (px, py, w, h) => {
+      x.beginPath();
+      if (x.roundRect) x.roundRect(px, py, w, h, R); else x.rect(px, py, w, h);
+    };
+    x.fillStyle = "#faf8ff"; x.fillRect(0, 0, cw, ch);          // latar terang
+    // Kartu plot: bayangan lembut kebiruan, bukan bayangan keras
+    x.save();
+    x.shadowColor = "rgba(31,38,135,0.18)"; x.shadowBlur = 18; x.shadowOffsetY = 6;
+    x.fillStyle = "#ffffff"; rr(M, M, W, H); x.fill();
+    x.restore();
+    x.save();
+    rr(M, M, W, H); x.clip();
     x.drawImage(img, M, M, W, H);
-    x.lineWidth = 3; x.strokeStyle = "#1c1b1b"; x.strokeRect(M + 1.5, M + 1.5, W - 3, H - 3);
+    x.restore();
+    x.lineWidth = 1; x.strokeStyle = "rgba(199,196,215,0.7)";
+    rr(M + .5, M + .5, W - 1, H - 1); x.stroke();
     c.toBlob((b) => {
       if (!b) return;
       const nm = (sharedPoint && sharedPoint.name) ? sharedPoint.name.replace(/[^\w-]+/g, "_")
@@ -644,7 +668,7 @@ function skewtLegend() {
     it(line("#1f8a4c"), "Titik embun (Td)") +
     it(line("#1c1b1b", "4 3"), "Jalur parcel") +
     it(barbSw, "Angin (barbs)") +
-    it(line("#0029d7", "5 3"), "LCL · dasar awan") +
+    it(line("#4648d4", "5 3"), "LCL · dasar awan") +
     it(line("#d97706", "5 3"), "LFC · mulai konveksi") +
     it(line("#7a1fa2", "5 3"), "EL · puncak konveksi") +
     it(box("rgba(226,35,32,.30)"), "CAPE · energi naik") +
@@ -768,22 +792,22 @@ function chartSeries(pd, lat, lon) {
   switch (BASE_OF[activeLayer] || activeLayer) {
     case "wind_surface": {
       const u = sampleVar(pd, "u", lat, lon), v = sampleVar(pd, "v", lat, lon);
-      return { label: "Kecepatan Angin", unit: "kt", color: "#0029d7", type: "line",
+      return { label: "Kecepatan Angin", unit: "kt", color: "#9698ff", type: "line",
                times, values: u.map((uu, i) => Math.sqrt(uu * uu + v[i] * v[i]) * MS_TO_KT) };
     }
-    case "temp_surface": return num("temp", "Suhu", "°C", "#e42320", "line", [0, 50]);
-    case "humidity_surface": return num("humidity", "Kelembapan", "%", "#1f8a5c", "line", [0, 100]);
-    case "cloud_surface": return num("cloud", "Tutupan Awan", "%", "#5a6472", "line", [0, 100]);
-    case "pressure_surface": return num("pressure", "Tekanan", "hPa", "#7a3fb0", "line", [1200, 400]);
-    case "storm_potential": return num("cape", "Potensi Badai (CAPE)", "J/kg", "#e84a2f", "line", [0, 4000]);
+    case "temp_surface": return num("temp", "Suhu", "°C", "#ff7b72", "line", [0, 50]);
+    case "humidity_surface": return num("humidity", "Kelembapan", "%", "#51cf66", "line", [0, 100]);
+    case "cloud_surface": return num("cloud", "Tutupan Awan", "%", "#adb5bd", "line", [0, 100]);
+    case "pressure_surface": return num("pressure", "Tekanan", "hPa", "#b197fc", "line", [1200, 400]);
+    case "storm_potential": return num("cape", "Potensi Badai (CAPE)", "J/kg", "#ff922b", "line", [0, 4000]);
     case "rain_accum_surface": {
       const rain = sampleVar(pd, "rain", lat, lon), days = {};
       times.forEach((t, i) => { const d = t.slice(0, 10); days[d] = (days[d] || 0) + rain[i] * 3; });
       const dts = Object.keys(days).sort();
-      return { label: "Akumulasi Hujan Harian", unit: "mm/hari", color: "#2360c8", type: "line",
+      return { label: "Akumulasi Hujan Harian", unit: "mm/hari", color: "#4dabf7", type: "line",
                times: dts.map((d) => d + "T00:00:00Z"), values: dts.map((d) => days[d]), daily: true };
     }
-    default: return num("rain", "Hujan", "mm", "#2360c8", "line"); // rain_surface
+    default: return num("rain", "Hujan", "mm", "#4dabf7", "line"); // rain_surface
   }
 }
 
@@ -838,7 +862,7 @@ function chartSVG(spec) {
   }
 
   // ---- sumbu X & Y + tick label (tanpa grid) ----
-  const AX = `stroke="#1c1b1b" stroke-width="1.4"`;
+  const AX = `stroke="rgba(255,255,255,0.32)" stroke-width="1"`;
   let axes = `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${y0}" ${AX}/>` +
              `<line x1="${padL}" y1="${y0}" x2="${padL + plotW}" y2="${y0}" ${AX}/>`;
   for (const tv of [hi, (lo + hi) / 2, lo]) {
@@ -866,7 +890,7 @@ function chartSVG(spec) {
   }
 
   return `<svg class="pt-meteo" viewBox="0 0 ${W} ${H}" width="100%">` +
-    `<rect x="1" y="1" width="${W - 2}" height="${H - 2}" fill="#ffffff" stroke="#1c1b1b" stroke-width="2"/>` +
+    `<rect x="0.5" y="0.5" width="${W - 1}" height="${H - 1}" rx="12" fill="rgba(255,255,255,0.055)" stroke="rgba(255,255,255,0.16)" stroke-width="1"/>` +
     axes + body + `</svg>`;
 }
 
@@ -1185,7 +1209,7 @@ function restoreFromHash() {
 async function shareCurrent() {
   updateHash();
   const url = location.href;
-  const data = { title: "Kertas Cuaca", text: "Lihat cuaca di Kertas Cuaca", url };
+  const data = { title: "CESGS Nimbus", text: "Lihat cuaca di CESGS Nimbus", url };
   try {
     if (navigator.share) { await navigator.share(data); return; }
     await navigator.clipboard.writeText(url);
@@ -1218,10 +1242,6 @@ document.addEventListener("fullscreenchange", () => {
   }
   map.invalidateSize();
 });
-
-// Kartu Tentang (modal)
-function openAbout() { $("about-overlay")?.classList.add("show"); }
-function closeAbout() { $("about-overlay")?.classList.remove("show"); }
 
 // ================= SEARCH KOTA/KABUPATEN =================
 let places = null, placesLoading = null;
@@ -1841,7 +1861,9 @@ async function init() {
     const slider = $("time-slider");
     if (slider) {
       slider.max = String(frames.length - 1);
+      syncSliderFill(slider);
       slider.addEventListener("input", (ev) => {
+        syncSliderFill(ev.target);   // isian gradasi ikut jari, tanpa nunggu data
         if (playing) togglePlay();
         showFrame(parseInt(ev.target.value, 10));
       });
@@ -1849,7 +1871,7 @@ async function init() {
     $("play-btn")?.addEventListener("click", togglePlay);
     buildTicks(); // label tanggal/jam WIB di bawah slider
 
-    // Tombol zoom neubrutalist → kontrol peta
+    // Tombol zoom kaca → kontrol peta
     $("zoom-in")?.addEventListener("click", () => map.zoomIn());
     $("zoom-out")?.addEventListener("click", () => map.zoomOut());
 
@@ -1912,11 +1934,7 @@ async function init() {
     $("pt-reopen")?.addEventListener("click", reopenPoint);
     $("share-btn")?.addEventListener("click", shareCurrent);
     $("fs-btn")?.addEventListener("click", toggleFullscreen);
-    $("about-btn")?.addEventListener("click", openAbout);
     $("nav-arrow")?.addEventListener("click", () => $("nav-arrow").closest(".brand-row")?.classList.toggle("nav-open"));
-    $("about-close")?.addEventListener("click", closeAbout);
-    $("about-overlay")?.addEventListener("click", (e) => { if (e.target === e.currentTarget) closeAbout(); });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeAbout(); });
     // Badge "Last update" (HP): tap ikon "!" → buka teks; tap lagi/panah → tutup.
     $("data-fresh")?.addEventListener("click", () => $("data-fresh").classList.toggle("open"));
     // Tempatkan badge: desktop → kontainer slider (atas-kanan); HP → dalam legend-col

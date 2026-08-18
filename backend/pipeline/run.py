@@ -227,7 +227,7 @@ def reconcile_and_catalog(run: dt.datetime) -> tuple[dict, int]:
 def main() -> None:
     run = latest_available_run()
     cutoff = run - dt.timedelta(hours=KEEP_PAST_HOURS)
-    print("== Pipeline Peta Cuaca (GFS) ==")
+    print("== Pipeline CESGS Nimbus (GFS) ==")
     print(f"Run GFS: {run:%Y-%m-%d %HZ} | langkah: {FORECAST_STEPS[0]}..{FORECAST_STEPS[-1]} jam")
 
     ctx = {"series": {}, "times": {}, "grid": None}   # kumpulan nilai utk point_data

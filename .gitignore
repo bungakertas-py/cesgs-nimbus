@@ -19,3 +19,15 @@ stitch_neubrutalist_meteorological_map_system.zip
 # Misc
 .DS_Store
 Thumbs.db
+
+# Berkas kerja lokal (screenshot, PDF referensi, arsip) — jangan ikut publish
+scratchpad/
+*.zip
+*.jpeg
+SS*.png
+Tes*.png
+Test*.png
+thumb_linkedin.png
+Kartu_Tentang_Farras.png
+"FotoFarras 1.png"
+*.pdf

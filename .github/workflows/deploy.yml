@@ -40,7 +40,7 @@ jobs:
       - name: Hydrate window from live site (retensi -24 jam)
         working-directory: backend/pipeline
         env:
-          SITE_DATA_URL: https://bungakertas-py.github.io/bungakertas-signature/backend/data/output
+          SITE_DATA_URL: https://bungakertas-py.github.io/cesgs-nimbus/backend/data/output
         run: python hydrate.py || true
 
       - name: Run pipeline (unduh GFS + generate output)
@@ -54,17 +54,17 @@ jobs:
           cp -r backend/data/output/. _site/backend/data/output/
           cat > _site/index.html <<'HTML'
           <!doctype html><meta charset="utf-8">
-          <title>Kertas Cuaca — Peta cuaca interaktif Indonesia</title>
+          <title>CESGS Nimbus — Peta Cuaca Interaktif Indonesia</title>
           <meta http-equiv="refresh" content="0; url=./frontend/index.html">
           <meta property="og:type" content="website">
-          <meta property="og:site_name" content="Kertas Cuaca">
-          <meta property="og:title" content="Kertas Cuaca — Peta cuaca interaktif Indonesia">
+          <meta property="og:site_name" content="CESGS Nimbus">
+          <meta property="og:title" content="CESGS Nimbus — Peta Cuaca Interaktif Indonesia">
           <meta property="og:description" content="Angin, hujan, suhu, awan, dan tekanan untuk seluruh Indonesia. Klik lokasimu untuk prakiraan detail per jam.">
-          <meta property="og:url" content="https://bungakertas-py.github.io/bungakertas-signature/">
-          <meta property="og:image" content="https://bungakertas-py.github.io/bungakertas-signature/frontend/og-image.png">
+          <meta property="og:url" content="https://bungakertas-py.github.io/cesgs-nimbus/">
+          <meta property="og:image" content="https://bungakertas-py.github.io/cesgs-nimbus/frontend/og-image.png">
           <meta name="twitter:card" content="summary_large_image">
-          <meta name="twitter:image" content="https://bungakertas-py.github.io/bungakertas-signature/frontend/og-image.png">
-          <a href="./frontend/index.html">Buka Kertas Cuaca</a>
+          <meta name="twitter:image" content="https://bungakertas-py.github.io/cesgs-nimbus/frontend/og-image.png">
+          <a href="./frontend/index.html">Buka CESGS Nimbus</a>
           HTML
 
       - uses: actions/upload-pages-artifact@v3

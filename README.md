@@ -1,4 +1,4 @@
-# bungakertas — From Sky to Data
+# CESGS Nimbus — Membaca Gerak Langit
 
 Peta cuaca interaktif (Windy-like, bergaya BMKG Signature) dari data model
 global gratis **GFS (NOAA/NCEP)**. Menampilkan animasi partikel angin + kontur
@@ -9,7 +9,7 @@ kecepatan, batas administrasi, dan time-slider forecast.
 - **Backend** (`backend/pipeline/`) — Python: unduh subset GFS via NOMADS,
   decode GRIB2 (cfgrib+eccodes), hasilkan aset statik (PNG data, PNG heatmap
   kecepatan, JSON velocity, `catalog.json`). Tanpa database.
-- **Frontend** (`frontend/`) — Leaflet + leaflet-velocity, gaya neubrutalist.
+- **Frontend** (`frontend/`) — Leaflet + leaflet-velocity, gaya Atmospheric Glass.
   Membaca aset statik dari `backend/data/output/`.
 - **Deploy** (`.github/workflows/deploy.yml`) — GitHub Actions cron tiap 6 jam
   menjalankan pipeline lalu publish frontend+data ke GitHub Pages.

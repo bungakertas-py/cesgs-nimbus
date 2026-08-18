@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dev server anti-cache untuk Peta Cuaca.
+"""Dev server anti-cache untuk CESGS Nimbus.
 
 Menyajikan ROOT proyek di http://127.0.0.1:8000 dengan header no-store, jadi
 setiap perubahan file (index.html / style.css / app.js / data) langsung terlihat
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     with DevServer(("127.0.0.1", PORT), NoCacheHandler) as httpd:
         url = f"http://127.0.0.1:{PORT}/frontend/index.html"
         print("=" * 60)
-        print(f"  Peta Cuaca — DEV SERVER (anti-cache)")
+        print(f"  CESGS Nimbus — DEV SERVER (anti-cache)")
         print(f"  Root : {ROOT}")
         print(f"  Buka : {url}")
         print(f"  Ctrl+C untuk berhenti.")

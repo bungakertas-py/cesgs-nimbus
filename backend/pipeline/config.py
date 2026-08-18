@@ -1,5 +1,5 @@
 """
-Konfigurasi pipeline peta cuaca (GFS).
+Konfigurasi pipeline CESGS Nimbus (peta cuaca GFS).
 
 Semua parameter global (region, variabel, path output) terpusat di sini agar
 mudah diperluas ke multi-model / multi-level / multi-variabel di fase berikutnya.

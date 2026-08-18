@@ -289,7 +289,7 @@
     const tPts = Ld.map((p, i) => [g.xOf(d.T[i], p), g.yOf(p)]);
     const tdPts = Ld.map((p, i) => [g.xOf(d.Td[i], p), g.yOf(p)]);
     const paPts = Ld.map((p, i) => [g.xOf(d.parcelT[i], p), g.yOf(p)]);
-    let lines = poly(paPts, "#1c1b1b", 1.3, "4 3");
+    let lines = poly(paPts, "#131b2e", 1.3, "4 3");
     lines += poly(tdPts, "#1f8a4c", 2, null);
     lines += poly(tPts, "#e42320", 2, null);
 
@@ -301,7 +301,7 @@
       marks += `<line x1="${g.x0}" y1="${y.toFixed(1)}" x2="${g.x0 + g.plotW}" y2="${y.toFixed(1)}" stroke="${color}" stroke-width="1" stroke-dasharray="5 3"/>`;
       marks += `<text x="${g.x0 + 3}" y="${(y - 3).toFixed(1)}" text-anchor="start" font-size="9" font-weight="700" fill="${color}" font-family="monospace">${label}</text>`;
     };
-    mark(d.lcl.p, "LCL", "#0029d7");
+    mark(d.lcl.p, "LCL", "#4648d4");
     mark(d.lfc, "LFC", "#d97706");
     mark(d.el, "EL", "#7a1fa2");
 
@@ -316,7 +316,7 @@
 
     const body =
       `<g clip-path="url(#skclip)">${bg}${shade}${lines}${marks}</g>${axis}` +
-      `<rect x="${g.x0}" y="${g.y0}" width="${g.plotW}" height="${g.plotH}" fill="none" stroke="#1c1b1b" stroke-width="1.2"/>` +
+      `<rect x="${g.x0}" y="${g.y0}" width="${g.plotW}" height="${g.plotH}" fill="none" stroke="rgba(19,27,46,0.16)" stroke-width="1"/>` +
       `<g>${barbs}</g>`;
     return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px" xmlns="http://www.w3.org/2000/svg"><defs>${clip}</defs>${body}</svg>`;
   }
