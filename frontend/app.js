@@ -1935,6 +1935,17 @@ async function init() {
     $("share-btn")?.addEventListener("click", shareCurrent);
     $("fs-btn")?.addEventListener("click", toggleFullscreen);
     $("nav-arrow")?.addEventListener("click", () => $("nav-arrow").closest(".brand-row")?.classList.toggle("nav-open"));
+    // Kartu Tentang: buka lewat tombol info, tutup lewat silang, klik latar, atau Esc.
+    const aboutBox = $("about-overlay");
+    const setAbout = (on) => {
+      if (!aboutBox) return;
+      aboutBox.classList.toggle("show", on);
+      aboutBox.setAttribute("aria-hidden", on ? "false" : "true");
+    };
+    $("about-btn")?.addEventListener("click", () => setAbout(true));
+    $("about-close")?.addEventListener("click", () => setAbout(false));
+    aboutBox?.addEventListener("click", (e) => { if (e.target === aboutBox) setAbout(false); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setAbout(false); });
     // Badge "Last update" (HP): tap ikon "!" → buka teks; tap lagi/panah → tutup.
     $("data-fresh")?.addEventListener("click", () => $("data-fresh").classList.toggle("open"));
     // Tempatkan badge: desktop → kontainer slider (atas-kanan); HP → dalam legend-col

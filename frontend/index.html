@@ -50,6 +50,7 @@
                 <strong>CESGS Nimbus</strong>
                 <span>Membaca Gerak Langit</span>
               </div>
+              <button id="about-btn" class="brand-info" aria-label="Tentang aplikasi ini" title="Tentang"><span class="material-symbols-outlined">info</span></button>
               <button id="nav-arrow" class="nav-arrow" aria-label="Pindah ke CESGS Baruna" title="CESGS Baruna"><span class="material-symbols-outlined">chevron_right</span></button>
             </div>
             <!-- Kontainer saudara (tersembunyi, muncul saat panah ditekan): ke CESGS Baruna. -->
@@ -227,6 +228,25 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <!-- Skeleton loading — meniru layout UI biar transisi mulus saat refresh -->
+    <!-- Kartu Tentang. Identitas lembaga, sumber data, dan penyangkalan.
+         Sengaja tanpa nama perorangan, ini produk lembaga. -->
+    <div id="about-overlay" class="about-overlay" role="dialog" aria-modal="true" aria-labelledby="about-title" aria-hidden="true">
+      <div class="about-card">
+        <button id="about-close" class="about-close" aria-label="Tutup"><span class="material-symbols-outlined">close</span></button>
+        <div class="about-logo"><img src="cesgs-logo.png" alt="CESGS, Center for Environmental, Social, and Governance Studies" /></div>
+        <div class="about-body">
+          <span class="about-tag">TENTANG</span>
+          <h2 class="about-name" id="about-title">CESGS Nimbus</h2>
+          <p class="about-intro">Cuaca Indonesia tujuh hari ke depan, diolah dari model global terbuka dan disajikan supaya bisa dibaca tanpa latar meteorologi. Dikembangkan CESGS Universitas Airlangga.</p>
+          <div class="about-meta">
+            <p><span class="material-symbols-outlined">database</span>Sumber data model GFS milik NOAA, terbuka dan gratis.</p>
+            <p><span class="material-symbols-outlined">update</span>Diperbarui otomatis tiap hari pukul 04.00 WIB.</p>
+            <p><span class="material-symbols-outlined">shield</span>Bukan peringatan resmi. Rujuk BMKG untuk keputusan penting.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="skeleton" aria-hidden="true">
       <div class="sk-top">
         <div class="sk-col">
