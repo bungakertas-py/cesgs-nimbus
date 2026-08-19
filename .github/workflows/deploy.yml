@@ -31,7 +31,12 @@ jobs:
 
       # eccodes butuh pustaka C; wheel pip biasanya sudah membawa binernya,
       # tapi pasang libeccodes0 sistem sebagai jaring pengaman.
+      # Langkah ini pernah menggantung 30 menit lebih karena cermin apt di
+      # runner GitHub macet. Karena cuma jaring pengaman, dia dibatasi waktu
+      # dan boleh gagal, jadi pembaruan harian tidak ikut mati gantung.
       - name: Install eccodes system lib (fallback)
+        timeout-minutes: 4
+        continue-on-error: true
         run: sudo apt-get update && sudo apt-get install -y libeccodes0
 
       - name: Install Python deps
