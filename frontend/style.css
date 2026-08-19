@@ -64,6 +64,22 @@
   --font-display: "Inter", system-ui, sans-serif;
   --font-ui: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* ---- Ukuran kontrol, ikut tinggi layar ----
+     Semua panel mengambang memakai angka dari sini, jadi layout bisa
+     mengecil serempak lewat satu tangga media query di bagian bawah
+     berkas. Lihat blok RESPONSIF TINGGI LAYAR. */
+  --ui-pad: 24px;        /* jarak panel ke tepi layar */
+  --col-gap: 12px;       /* jarak antar panel dalam satu kolom */
+  --ctl: 46px;           /* sisi tombol variabel dan tombol kontrol */
+  --ctl-ico: 22px;       /* ukuran ikon di dalam tombol */
+  --rail-gap: 8px;       /* jarak antar tombol di rel variabel */
+  --zoom-btn: 38px;      /* tombol perbesar dan perkecil */
+  --tl-btn: 38px;        /* tombol putar di slider */
+  --brand-logo: 38px;    /* logo di kartu nama aplikasi */
+  --brand-pad: 11px;     /* jarak dalam kartu nama aplikasi */
+  --panel-pad: 14px;     /* jarak dalam panel MODEL dan LEVEL */
+  --tl-pad-y: 12px;      /* jarak atas bawah di dalam slider */
 }
 
 * { box-sizing: border-box; }
@@ -106,12 +122,20 @@ html, body {
 
 /* Overlay wrapper */
 #ui {
-  position: absolute; inset: 0; padding: 24px;
+  position: absolute; inset: 0; padding: var(--ui-pad);
   display: flex; flex-direction: column; justify-content: space-between;
   pointer-events: none; z-index: 500;
 }
-.ui-top { display: flex; justify-content: space-between; align-items: flex-start; }
-.col { display: flex; flex-direction: column; gap: 12px; }
+/* Bagian atas boleh menyusut, bagian bawah tidak pernah.
+   Ini pengaman terakhir. Kalau di layar yang sangat pendek panel atas
+   masih kepanjangan, yang meluber panel atasnya, bukan slider dan
+   legenda yang terdorong keluar bingkai. */
+.ui-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  flex: 0 1 auto; min-height: 0;
+}
+.ui-bottom { flex: none; }
+.col { display: flex; flex-direction: column; gap: var(--col-gap); }
 .col.items-end { align-items: flex-end; }
 
 /* Panel dasar kaca — dipakai ulang semua widget mengambang */
@@ -125,8 +149,11 @@ html, body {
 }
 
 /* ---- Brand ---- */
-.brand { display: flex; align-items: center; gap: 11px; padding: 11px 16px 11px 13px; }
-.brand-logo { flex: none; }
+.brand {
+  display: flex; align-items: center; gap: 11px;
+  padding: var(--brand-pad) calc(var(--brand-pad) + 5px) var(--brand-pad) calc(var(--brand-pad) + 2px);
+}
+.brand-logo { flex: none; width: var(--brand-logo); height: var(--brand-logo); }
 .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
 .brand-text strong {
   font-family: var(--font-display); font-weight: 600; font-size: 19px; letter-spacing: -.01em;
@@ -156,13 +183,13 @@ html, body {
    sebagai pil kaca di sebelah kanan waktu kursor lewat, jadi peta tidak
    tertutup daftar teks yang panjang. */
 .panel.layers {
-  display: flex; flex-direction: column; width: max-content; gap: 8px;
+  display: flex; flex-direction: column; width: max-content; gap: var(--rail-gap);
   padding: 0; background: none; border: none; box-shadow: none;
   backdrop-filter: none; -webkit-backdrop-filter: none;
 }
 .layer-btn {
   position: relative;
-  width: 46px; height: 46px; flex: none;
+  width: var(--ctl); height: var(--ctl); flex: none;
   display: flex; align-items: center; justify-content: center;
   padding: 0; border: 1px solid var(--glass-brd); border-radius: var(--r-card);
   background: var(--glass);
@@ -172,7 +199,7 @@ html, body {
   transition: transform .16s ease, box-shadow .16s ease, background .16s ease, color .16s ease;
 }
 .layer-btn .material-symbols-outlined {
-  font-size: 22px; transition: color .16s;
+  font-size: var(--ctl-ico); transition: color .16s;
   filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .55));
 }
 .layer-btn:hover:not(.disabled) {
@@ -224,7 +251,7 @@ html, body {
 }
 
 /* ---- Model / level ---- */
-.selects { width: 236px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.selects { width: 236px; padding: var(--panel-pad); display: flex; flex-direction: column; gap: var(--panel-pad); }
 .field .label-caps { margin-bottom: 5px; }
 .select-wrap { position: relative; }
 .select-wrap select {
@@ -263,7 +290,7 @@ html, body {
   border: 1px solid var(--glass-brd); border-radius: var(--r-panel); box-shadow: var(--shadow-sm), var(--rim);
 }
 .zoom button {
-  width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+  width: var(--zoom-btn); height: var(--zoom-btn); display: flex; align-items: center; justify-content: center;
   border: none; background: transparent; border-radius: var(--r-btn); color: var(--ink);
   cursor: pointer; transition: background .16s, color .16s;
 }
@@ -271,7 +298,7 @@ html, body {
 .zoom button:hover { background: var(--fill-2); color: var(--ink); }
 
 .icon-btn {
-  width: 46px; height: 46px; display: flex; align-items: center; justify-content: center;
+  width: var(--ctl); height: var(--ctl); display: flex; align-items: center; justify-content: center;
   border: 1px solid var(--glass-brd); border-radius: var(--r-card);
   background: var(--glass); backdrop-filter: blur(var(--blur)) saturate(1.25); -webkit-backdrop-filter: blur(var(--blur)) saturate(1.25);
   color: var(--ink);
@@ -282,7 +309,7 @@ html, body {
   transform: translateY(-2px); background: var(--glass-strong);
   box-shadow: var(--shadow), var(--rim); color: var(--ink);
 }
-.icon-btn .material-symbols-outlined { filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .55)); }
+.icon-btn .material-symbols-outlined { font-size: calc(var(--ctl-ico) + 2px); filter: drop-shadow(0 1px 3px rgba(0, 0, 0, .55)); }
 .icon-btn:disabled { opacity: .4; cursor: not-allowed; }
 .icon-btn.active {
   background: linear-gradient(135deg, var(--primary-mid), var(--secondary-deep));
@@ -361,7 +388,7 @@ html, body {
 .cc-ico.cc-mini .material-symbols-outlined { font-size: 13px; }
 
 /* timeline / slider — bawah kiri; flex 1 supaya panjangnya dibatasi legenda di kanan */
-.timeline { flex: 1; min-width: 0; padding: 12px 18px; display: flex; align-items: center; gap: 16px; position: relative; }
+.timeline { flex: 1; min-width: 0; padding: var(--tl-pad-y) 18px; display: flex; align-items: center; gap: 16px; position: relative; }
 .tl-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .tl-cur { display: flex; justify-content: flex-end; align-items: center; gap: 8px; font-size: 11px; }
 .tl-cur .mono {
@@ -380,7 +407,7 @@ html, body {
 .tl-tick.day .tl-tick-lbl { color: var(--variant); font-weight: 500; }
 .tl-btns { display: flex; gap: 10px; }
 .tl-btn {
-  width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;
+  width: var(--tl-btn); height: var(--tl-btn); display: flex; align-items: center; justify-content: center;
   border: none; border-radius: 50%;
   background: linear-gradient(135deg, var(--primary-mid), var(--secondary-deep)); color: var(--on-primary);
   box-shadow: 0 4px 16px rgba(96, 99, 238, .45); cursor: pointer;
@@ -1004,7 +1031,7 @@ html, body {
 
 /* ---- TABLET (≤1024px): kecilkan panel, legenda bisa di-scroll ---- */
 @media (max-width: 1024px) {
-  #ui { padding: 16px; }
+  :root { --ui-pad: 16px; }
   .selects { width: 210px; }
   .brand-text strong { font-size: 17px; }
   .legend-col { max-width: 58vw; }
@@ -1022,8 +1049,8 @@ html, body {
     --blur: 10px; --blur-lg: 14px;
     --glass: rgba(12, 18, 34, 0.5);
     --glass-strong: rgba(12, 18, 34, 0.68);
+    --ui-pad: 12px;
   }
-  #ui { padding: 12px; }
   .ui-top { gap: 8px; align-items: flex-start; }
   /* kolom: anak-anaknya rapat ke kiri (jangan meregang mengikuti banner siklon) */
   .col { align-items: flex-start; }
@@ -1133,4 +1160,177 @@ html, body {
 
   /* kotak pencarian = selebar layar di bawah bar atas */
   .search-box { position: fixed; top: 116px; left: 12px; right: 12px; width: auto; }
+}
+
+/* =====================================================================
+   RESPONSIF TINGGI LAYAR — laptop dan monitor pendek
+   =====================================================================
+   Masalahnya bukan lebar, tapi tinggi. Kolom kiri (nama aplikasi, rel
+   delapan variabel, panel MODEL dan LEVEL) dan kolom kanan (sebelas
+   tombol kontrol) dulu ukurannya tetap, total 656 dan 602 piksel. Di
+   layar yang tinggi tampilannya di bawah 766 piksel, slider waktu dan
+   legenda terdorong keluar bingkai. Monitor 1366x768 dan 1440x900 kena.
+
+   Solusinya tangga ukuran. Makin pendek layar, makin kecil semua panel,
+   serempak lewat variabel di :root. Semua tangga dibatasi min-width 641
+   supaya layout HP yang sudah jadi tidak ikut terpengaruh, dan supaya
+   tombol di layar sentuh tidak menyusut jadi susah dipencet.
+   ===================================================================== */
+
+/* ---- Monitor 1080p dan sejenisnya, tinggi tampilan sekitar 900 ---- */
+@media (min-width: 641px) and (max-height: 900px) {
+  :root {
+    --ui-pad: 20px; --col-gap: 10px;
+    --ctl: 43px; --ctl-ico: 21px; --rail-gap: 7px;
+    --zoom-btn: 35px; --tl-btn: 36px;
+    --brand-logo: 35px; --brand-pad: 10px;
+    --panel-pad: 12px; --tl-pad-y: 11px;
+  }
+}
+
+/* ---- Laptop 1600x900 dan monitor 1440x900 ---- */
+@media (min-width: 641px) and (max-height: 820px) {
+  :root {
+    --ui-pad: 17px; --col-gap: 9px;
+    --ctl: 40px; --ctl-ico: 20px; --rail-gap: 6px;
+    --zoom-btn: 33px; --tl-btn: 34px;
+    --brand-logo: 33px; --brand-pad: 9px;
+    --panel-pad: 11px; --tl-pad-y: 10px;
+  }
+  .brand-text strong { font-size: 17px; }
+  .selects { width: 220px; }
+}
+
+/* ---- Laptop 1366x768 dan 1536x864, ini kasus yang dilaporkan ----
+   Tagline di kartu nama disembunyikan, namanya sudah cukup jelas. */
+@media (min-width: 641px) and (max-height: 740px) {
+  :root {
+    --ui-pad: 14px; --col-gap: 8px;
+    --ctl: 37px; --ctl-ico: 19px; --rail-gap: 5px;
+    --zoom-btn: 31px; --tl-btn: 32px;
+    --brand-logo: 30px; --brand-pad: 8px;
+    --panel-pad: 10px; --tl-pad-y: 9px;
+  }
+  .brand-text strong { font-size: 16px; }
+  .brand-text span { display: none; }
+  .selects { width: 206px; }
+  .tl-ticks { height: 16px; }
+}
+
+/* ---- Layar pendek, mis. 1280x720 atau jendela yang dikecilkan ----
+   Panel MODEL dan LEVEL dijadikan satu baris, dan tombol bahasa
+   disembunyikan karena EN memang belum aktif. */
+@media (min-width: 641px) and (max-height: 670px) {
+  :root {
+    --ui-pad: 12px; --col-gap: 7px;
+    --ctl: 34px; --ctl-ico: 18px; --rail-gap: 4px;
+    --zoom-btn: 29px; --tl-btn: 30px;
+    --brand-logo: 28px; --brand-pad: 7px;
+    --panel-pad: 9px; --tl-pad-y: 8px;
+  }
+  .selects { flex-direction: row; width: auto; }
+  .selects .field { flex: 1; min-width: 96px; }
+  .field .label-caps { margin-bottom: 3px; font-size: 10px; }
+  .select-wrap select { padding: 6px 26px 6px 9px; font-size: 11px; }
+  .lang { display: none; }
+  .tl-ticks { height: 15px; }
+  .tl-tick-lbl { font-size: 8.5px; }
+}
+
+/* ---- Sangat pendek, mis. layar 600 piksel atau perbesaran browser ----
+   Tombol perbesar dan perkecil disembunyikan, peta tetap bisa dizoom
+   pakai roda tetikus, cubit, atau dobel klik. */
+@media (min-width: 641px) and (max-height: 600px) {
+  :root {
+    --ui-pad: 10px; --col-gap: 6px;
+    --ctl: 31px; --ctl-ico: 17px; --rail-gap: 3px;
+    --tl-btn: 28px;
+    --brand-logo: 26px; --brand-pad: 6px;
+    --panel-pad: 8px; --tl-pad-y: 7px;
+  }
+  .zoom { display: none; }
+  .brand-text strong { font-size: 15px; }
+  .legend-cell { min-height: 24px; font-size: 11px; }
+}
+
+/* ---- Ekstrem, mis. HP diputar mendatar (844x390) ----
+   Di bawah ini mengecilkan panel saja sudah tidak cukup. Rel variabel
+   dan tombol kontrol diciutkan jadi dua tombol dropdown, memakai
+   mekanisme yang sama dengan tampilan HP. Ukuran tombol ditahan di 40
+   piksel supaya tetap enak dipencet dengan jari. ---- */
+@media (min-width: 641px) and (max-height: 540px) {
+  :root { --ctl: 40px; --ctl-ico: 20px; --rail-gap: 6px; --col-gap: 7px; --ui-pad: 10px; }
+
+  /* kiri: rel variabel jadi dropdown "Parameter" */
+  .param-toggle {
+    display: flex; align-items: center; gap: 7px;
+    height: 40px; padding: 0 14px 0 12px; border-radius: var(--r-card);
+    background: var(--glass); backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
+    border: 1px solid var(--glass-brd); box-shadow: var(--shadow-sm), var(--rim);
+    font-family: var(--font-ui); font-weight: 500; font-size: 13px; letter-spacing: .01em;
+    color: var(--ink); cursor: pointer; pointer-events: auto;
+  }
+  .param-ico { font-size: 19px; color: var(--primary); }
+  .param-caret { font-size: 20px; color: var(--variant); transition: transform .16s ease; }
+  .layer-bar {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+    border: none; box-shadow: none; background: none;
+  }
+  .layer-bar.param-open .param-caret { transform: rotate(180deg); }
+  .panel.layers { display: none; }
+  /* Rel dibuka MENDATAR, bukan menurun. Layar sependek ini tak punya ruang
+     untuk delapan tombol bertumpuk, nanti malah menutupi slider. */
+  .layer-bar.param-open .panel.layers {
+    display: flex; flex-direction: row; flex-wrap: wrap;
+    max-width: 46vw; gap: var(--rail-gap);
+  }
+  .lb-txt { display: none; }   /* tak ada ruang untuk pil nama di samping */
+
+  /* LEVEL pindah ke dropdown sendiri, panel MODEL disembunyikan */
+  .selects { display: none; }
+  .level-bar {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+    border: none; box-shadow: none; background: none;
+  }
+  .level-bar.level-open .param-caret { transform: rotate(180deg); }
+  .level-bar.level-open .levels { display: flex; }
+
+  /* kanan: tombol kontrol diciutkan jadi satu tombol titik tiga */
+  #ctrl-toggle {
+    display: flex; align-items: center; justify-content: center; gap: 1px;
+    height: 40px; padding: 0 10px; border-radius: var(--r-card);
+    background: var(--glass); backdrop-filter: blur(var(--blur)); -webkit-backdrop-filter: blur(var(--blur));
+    border: 1px solid var(--glass-brd); box-shadow: var(--shadow-sm), var(--rim);
+    color: var(--ink); cursor: pointer; pointer-events: auto;
+  }
+  #ctrl-toggle .material-symbols-outlined { font-size: 20px; }
+  .ctrl-caret { transition: transform .16s ease; }
+  .col.items-end.ctrl-open .ctrl-caret { transform: rotate(180deg); }
+  .lang, .zoom { display: none; }
+  .col.items-end > .icon-btn,
+  .col.items-end > .search-wrap,
+  .col.items-end > .city-wrap,
+  .col.items-end > .phenom-wrap { display: none; }
+  .col.items-end.ctrl-open > .icon-btn { display: flex; }
+  .col.items-end.ctrl-open > .search-wrap,
+  .col.items-end.ctrl-open > .city-wrap,
+  .col.items-end.ctrl-open > .phenom-wrap { display: block; }
+  /* Sama seperti rel variabel, tombol kontrol dibuka melebar ke kiri
+     supaya tidak menumpuk ke bawah dan menutupi slider. */
+  .col.items-end.ctrl-open {
+    flex-direction: row; flex-wrap: wrap; justify-content: flex-end;
+    max-width: 46vw;
+  }
+
+  /* bawah: slider dipadatkan, label tanggal dihilangkan */
+  .tl-ticks { display: none; }
+  .legend-cell { min-height: 22px; font-size: 10px; }
+}
+
+/* ---- Monitor lebar dan ultrawide ----
+   Slider tidak perlu ikut melar sampai tiga meter. Panjangnya dibatasi,
+   legenda tetap menempel di kanan. ---- */
+@media (min-width: 1700px) {
+  .timeline { max-width: 1180px; }
+  .legend-col { margin-left: auto; }
 }
